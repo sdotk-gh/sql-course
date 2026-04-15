@@ -173,31 +173,25 @@ We can group by at whatever level of aggregation we need and calculate several a
 -- Aggregate over the entire dataset
 SELECT
 	COUNT(*) AS NumberOfPatients
-	
 	,SUM(ps.Tariff) AS TotalTariff
 FROM
 	PatientStay ps;
 
 -- GROUP BY a single column
 SELECT
-	ps.AdmittedDate
-	
-	,COUNT(*) AS NumberOfPatients
-	
-	,SUM(ps.Tariff) AS TotalTariff
-FROM
-	PatientStay ps
-GROUP BY
-	ps.AdmittedDate;
+	ps.Ward
+		,COUNT(*) AS NumberOfPatients
+			,SUM(ps.Tariff) AS TotalTariff
+			FROM
+				PatientStay ps
+				GROUP BY
+					ps.Ward;
 
 -- GROUP BY two columns
 SELECT
 	ps.AdmittedDate
-	
 	,ps.Hospital
-	
 	,COUNT(*) AS NumberOfPatients
-	
 	,SUM(ps.Tariff) AS TotalTariff
 FROM
 	PatientStay ps
@@ -210,15 +204,12 @@ Filter the grouped result with the HAVING clause
 Remember that the WHERE clause filters the data before it is aggregated
 */
 SELECT
-	AdmittedDate
-	
+AdmittedDate
 	,SUM(ps.Tariff) AS TotalTariff
-	
 	,MIN(ps.Tariff) AS SmallestTariff
-	
 	,AVG(ps.Tariff) AS AverageTariff
-	
-	,COUNT(*) AS NumberOfTariffs
+	,COUNT(*) AS NumberOfPatients
+	,max(ps.Tariff) as BiggestTariff
 FROM
 	PatientStay ps
 WHERE
@@ -236,27 +227,23 @@ SELECT
 	*
 FROM
 	DimHospital;
-
 SELECT
 	*
 FROM
 	PatientStay ps
 	JOIN DimHospital h ON
 	ps.Hospital = h.Hospital;
-
 /*
  A more precise way of doing a JOIN
 */
 
 SELECT
 	ps.PatientId
-	
-	,ps.AdmittedDate
-	
-	,h.HospitalType
-	
-	,h.HospitalSize
-FROM
-	PatientStay ps
-	JOIN DimHospital h ON
-	ps.Hospital = h.Hospital;
+		,ps.AdmittedDate
+			,h.HospitalType
+				,h.HospitalSize
+					,h.Hospital
+					FROM
+						PatientStay ps
+							JOIN DimHospital h ON
+								ps.Hospital = h.Hospital;
